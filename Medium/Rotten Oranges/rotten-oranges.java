@@ -35,33 +35,45 @@ class Solution
     public int orangesRotting(int[][] grid)
     {
         // Code here
-        int n=grid.length,m=grid[0].length,ones=0;
+        int row=grid.length;
+        int col=grid[0].length;
+        
+        int count_oranges=0;
+        int ans=0;
         Queue<int []> q=new LinkedList<>();
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j]==2) q.add(new int[]{i,j});
-                else if(grid[i][j]==1) ones++;
+        int cnt=0;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]==2)
+                    q.offer(new int[]{i,j});
+                if(grid[i][j]!=0)
+                    count_oranges++;
             }
         }
-        int ans=0;
-        int [][] moves=new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
+        if(count_oranges==0) return 0;
+        int dr[]={0,1,0,-1};
+        int dc[]={1,0,-1,0};
+        
         while(!q.isEmpty()){
             int size=q.size();
-            boolean changed=false;
-            while(size-->0){
-                int [] cell=q.poll();
-                for(int i=0;i<4;i++){
-                    int row=moves[i][0]+cell[0],col=moves[i][1]+cell[1];
-                    if(row<n && col<m && row>=0 && col>=0 && grid[row][col]==1){
-                         grid[row][col]=2;
-                         q.add(new int[]{row,col});
-                         ones--;
-                         changed=true;
-                    }
+            cnt+=size;
+            for(int i=0;i<size;i++){
+                
+                int point[]=q.poll();
+                for(int j=0;j<4;j++){
+                    int x=point[0] + dr[j];
+                    int y=point[1] + dc[j];
+                    
+                    if(x<0 || y<0 ||x>=row||y>=col||grid[x][y]==0||grid[x][y]==2) continue;
+                    grid[x][y]=2;
+                    q.offer(new int[]{x,y});
                 }
             }
-            if(changed) ans++;
+            if(!q.isEmpty()){
+                ans++;
+            }
+            
         }
-        return ones==0?ans:-1;
+        return count_oranges==cnt?ans:-1;
     }
 }
